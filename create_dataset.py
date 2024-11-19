@@ -1,6 +1,6 @@
 import os
 import torch
-import datasets
+from datasets import Dataset
 import json
 import ipdb
 import random
@@ -21,7 +21,7 @@ def read_data(path):
             lines = fr.readlines()
             for line in lines:
                 data = json.loads(line)
-                if data["text_keywords"] == "":
+                if data["text_keywords"] == "" or len(data["nor_expression"]) > 500:
                     continue
                 data_ls.append(data)
     sample_list = random.sample(data_ls, 100000)
@@ -110,7 +110,8 @@ def process(data_list):
         result["positive"].append(f"expression: {p_exp} \nkeywords: {p_kw}")
         result["negative"].append(f"expression: {n_exp} \nkeywords: {n_kw}")
 
-    return result
+    ds = Dataset.from_dict(result)
+    ds.save_to_disk("training_data")
 
 
 def main():

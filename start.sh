@@ -1,1 +1,1 @@
-python train_embedding.py --lr 2e-5 --epoch 30 --base_model_or_path "all-MiniLM-L6-v2" --model_save_path "./models/save"
+python train_embedding.py --lr 2e-5 --epoch 30 --base_model_or_path "all-MiniLM-L6-v2" --model_save_path "all-MiniLM-L6-v2" --training_data_path "C:\vscode_project\retrieval\training_data"
