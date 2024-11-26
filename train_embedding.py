@@ -1,6 +1,6 @@
 import os
 import torch
-from datasets import load_dataset
+from datasets import load_from_disk
 from sentence_transformers import (
     SentenceTransformer,
     SentenceTransformerTrainer,
@@ -26,7 +26,7 @@ def get_args():
 def main():
     args = get_args()
     model = SentenceTransformer(args.base_model_or_path)
-    dataset = load_dataset(args.training_data_path)
+    dataset = load_from_disk(args.training_data_path)
 
     train_test = dataset.train_test_split(test_size=0.2)
     train_dataset = train_test["train"]
@@ -37,7 +37,7 @@ def main():
     args = SentenceTransformerTrainingArguments(
         output_dir=args.model_save_path,
         num_train_epochs=args.epoch,
-        learning_rate=args.learning_rate,
+        learning_rate=args.lr,
         warmup_ratio=0.1,
         # fp16=True,  # Set to False if you get an error that your GPU can't run on FP16
         # bf16=False,  # Set to True if you have a GPU that supports BF16
@@ -50,6 +50,7 @@ def main():
         train_dataset=train_dataset,
         loss=loss,
     )
+    ipdb.set_trace()
     trainer.train()
 
 

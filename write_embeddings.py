@@ -18,7 +18,11 @@ def write_math_info(path):
                 d = json.loads(line)
                 data.append(d)
         for item in data:
-            cursor.execute("UPDATE math_info SET embedding = %s WHERE row_id = %s", (item["embedding"], item["math_id"]))
+            i = repr(item["math_id"])
+            e = item["embedding"]
+            e = "\'" + repr(e) + "\'"
+            # ipdb.set_trace()
+            cursor.execute(f"UPDATE math_info SET embedding = {e} WHERE math_id = {i}")
         cursor.connection.commit()
 
 

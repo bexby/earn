@@ -116,7 +116,7 @@ class extract:
     def get_math(self):
         math_list = self.soup.find_all("math")
         
-        result = {"latex_expression": [], "previous_text": []}
+        result = {"latex_expression": [], "previous_text": [], "is_inline": []}
         
         for math_tag in math_list:
             try:
@@ -128,7 +128,8 @@ class extract:
                 continue
             else:
                 pre_text = ""
-                if self.is_inline(math_tag) and math_tag.previous_siblings != None:
+                inline = self.is_inline(math_tag)
+                if inline and math_tag.previous_siblings != None:
                     for brother in math_tag.previous_siblings:
                         if isinstance(brother, NavigableString) and brother.string != "\n":
                             pre_text = brother.string + pre_text
@@ -137,7 +138,7 @@ class extract:
                                 pre_text = brother["alttext"] + pre_text
                             except:
                                 continue
-                elif not self.is_inline(math_tag):
+                elif not inline:
                     pre_grap = None
                     for pre in math_tag.previous_elements:
                         if pre.name == "p":
@@ -157,6 +158,7 @@ class extract:
                 # ipdb.set_trace()             
                 result["latex_expression"].append(math_s)
                 result["previous_text"].append(pre_text)
+                result['is_inline'].append(1 if inline else 0)
         return result
 
 
@@ -199,7 +201,7 @@ def normalize_format(latex_expr):
 
 def main():
     data_path = r"C:\Users\86159\Downloads\ar5iv_1710-2209\ar5iv"
-    save_path = r"C:\vscode_project\retrieval"
+    save_path = r"C:\vscode_project\retrieval\new_math"
     ff = load_file_name(data_path)
     all_paper_info = []    # {"id": name, "title": title, "abstract": abstract, "keywords": keywords, }
     paper_math_info = []    # {"math_id": math_id, "latex_expression": exp, "previous_text": pret, "text_keywords": tkw, "nor_expression": nor_exp}
@@ -213,8 +215,6 @@ def main():
     kw_model = KeyBERT()
 
     for folder, file_ls in tqdm(ff.items(), desc="processed folders", position=0):
-        if folder <= "1912":
-            continue
         for re_file in tqdm(file_ls, desc="files in folder", position=1):
             file = os.path.join(data_path, folder, re_file)
             if os.path.getsize(file) < 50000:
@@ -246,7 +246,7 @@ def main():
             with open(os.path.join(save_path, "folder" + folder + "_math_info.jsonl"), "a") as fw:
                 for i in range(num_exp):
                     try:
-                        data = {"math_id": math_id[i], "latex_expression": math_info['latex_expression'][i], "previous_text": math_info['previous_text'][i], "text_keywords": text_kw[i], "nor_expression": nor_math[i]}
+                        data = {"math_id": math_id[i], "latex_expression": math_info['latex_expression'][i], "previous_text": math_info['previous_text'][i], "text_keywords": text_kw[i], "nor_expression": nor_math[i], "is_inline": math_info["is_inline"][i]}
                     except:
                         continue
                     fw.write(json.dumps(data))
