@@ -33,7 +33,7 @@ def write_math_info(path):
                 d = json.loads(line)
                 data.append(tuple(d.values()))
         
-        cursor.executemany("insert into math_info (math_id, latex_expression, previous_text, text_keywords, nor_expression) values (%s, %s, %s, %s, %s)", data)
+        cursor.executemany("insert into math_info (math_id, latex_expression, previous_text, text_keywords, nor_expression, is_inline) values (%s, %s, %s, %s, %s, %s)", data)
         cursor.connection.commit()
 
 

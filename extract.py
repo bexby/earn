@@ -201,7 +201,7 @@ def normalize_format(latex_expr):
 
 def main():
     data_path = r"C:\Users\86159\Downloads\ar5iv_1710-2209\ar5iv"
-    save_path = r"C:\vscode_project\retrieval\new_math"
+    save_path = r"C:\vscode_project\retrieval\math_info"
     ff = load_file_name(data_path)
     all_paper_info = []    # {"id": name, "title": title, "abstract": abstract, "keywords": keywords, }
     paper_math_info = []    # {"math_id": math_id, "latex_expression": exp, "previous_text": pret, "text_keywords": tkw, "nor_expression": nor_exp}
