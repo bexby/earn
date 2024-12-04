@@ -45,14 +45,16 @@ def get_infomation(expression, topk):
     result = []
     for item in candidates:
         out_sim.append(item["similarity"])
-    out_topk, out_indices = torch.topk(torch.tensor(out_sim), topk=topk, sorted=True)
+    out_topk, out_indices = torch.topk(torch.tensor(out_sim), k=topk, sorted=True)
     for v, i in zip(out_topk, out_indices):
-        result.append({"math_id": candidates["math_id"][i], "nor_expression": candidates["nor_expression"][i], "is_inline": candidates["is_inline"][i], "similarity": v})
+        result.append({"math_id": candidates[i]["math_id"], "nor_expression": candidates[i]["nor_expression"], "is_inline": candidates[i]["is_inline"], "similarity": v})
     return result
 
 
 
 if __name__ == "__main__":
     expression = r"a^2+b^2=c^2"
-    get_infomation(expression, 20)
+    res = get_infomation(expression, 20)
+    for i in res:
+        print(res)
     conn.close()
